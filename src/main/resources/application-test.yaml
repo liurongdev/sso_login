@@ -1,0 +1,112 @@
+
+
+server:
+  port: 9093
+
+spring:
+#  kafka:
+#    bootstrap-servers: localhost:9092
+#    producer:
+#      retries: 0
+#      batch-size: 16484
+#      buffer-memory: 33554432
+#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+#      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+#    consumer:
+#      group-id: test-consumer
+#      enable-auto-commit: true
+#      auto-offset-reset: earliest
+#      #auto-commit-interval: 1000
+#      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/ronge?serverTimezone=UTC&characterEncoding=utf-8
+    username: root
+    password: cxx931219
+    driver-class-name: com.mysql.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      #初始化物理连接的数量
+      initial-size: 5
+      #最大连接池的数量
+      max-active: 20
+      min-idle: 5
+      #获取连接时最大的等待时间，单位毫秒
+      max-wait: 30000
+
+      #是否启用preparedStatement缓存,也就是PSChace,对oracle提升较大，mysql建议关闭
+      pool-prepared-statements: false
+      #要启用PSCache，必须配置大于0，当大于0时，poolPreparedStatements自动触发修改为true。在Druid中，不会存在Oracle下PSCache占用内存过多的问题，可以把这个数值配置大一些，比如说100
+      max-open-prepared-statements: -1
+
+      #配置监控统计拦截的filter，去掉后监控界面sql无法统计
+      filter: stat,wall,slf4j
+
+      #Spring监控AOP切入点，如x.y.z.service.*,配置多个英文逗号分隔
+      aop-patterns: com.web.springbootdruid.service.*
+
+      #配置多久检测一次可以关闭的空闲连接时间间隔
+      time-between-eviction-runs-millis: 60000
+      #连接池保持空闲而不被驱逐的最小生存时间
+      min-evictable-idle-time-millis: 30000
+      #连接池保持空闲而不被驱逐的最大生存时间
+      max-evictable-idle-time-millis: 40000
+
+      #druid连接池监控登录
+      stat-view-servlet:
+        #启用StateViewServlet,默认值为true
+        enabled: true
+        login-username: admin
+        login-password: admin
+        #访问/druid时，跳转到StatViewServlet
+        url-pattern: /druid/*
+        #是否能够重置数据
+        reset-enable: false
+        allow: 127.0.0.1
+        #ip黑名单，共同存在时，deny优先于allow
+        deny:
+
+      #是否启用StateFilter 默认值为true
+      web-stat-filter:
+        enabled: true
+        url-pattern: /*
+        exclusions: "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*"
+
+
+logging:
+  config: classpath:log4j2.yaml
+
+
+
+
+
+#????mybatis
+#mybatis.configuration.map-underscore-to-camel-case=true
+#mybatis.mapper-locations=classpath:mapper/*.xml
+#mybatis.type-aliases-package=com.ronge.demo.entity
+
+
+#eureka
+##eureka.instance.hostname=localhost
+#eureka.client.register-with-eureka=true
+#eureka.client.fetch-registry=true
+#eureka.client.serviceUrl.defaultZone=http://localhost:8090/eureka/
+
+#????redis
+#spring.redis.host=localhost
+#spring.redis.port=6379
+#spring.redis.database=0
+#spring.redis.jedis.pool.max-active=8
+#spring.redis.jedis.pool.min-idle=0
+#spring.redis.lettuce.pool.max-active=8
+#spring.redis.jedis.pool.max-wait=-1ms
+
+
+
+
+
+
+
+
+
