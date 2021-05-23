@@ -17,7 +17,7 @@ class SsoLoginApplicationTests {
 
 
 	@Test
-	public void testSecret(){
+	public void testSecret() throws Exception {
 		String name = "ronge";
 		String encryptName = SecretUtils.AesEncrypt(name);
 		System.out.println(encryptName);

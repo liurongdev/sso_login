@@ -1,11 +1,17 @@
 package com.login.sso_login.model;
 
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class User {
 
     private int id;
@@ -18,6 +24,8 @@ public class User {
 
     private Date updateDate;
 
+    private String headImageUrl;
+
     @Override
     public String toString() {
         return "User{" +
@@ -26,6 +34,7 @@ public class User {
                 ", passWord='" + passWord + '\'' +
                 ", createDate=" + createDate +
                 ", updateDate=" + updateDate +
+                ", headImageUrl=" + headImageUrl +
                 '}';
     }
 }

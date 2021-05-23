@@ -1,6 +1,7 @@
 package com.login.sso_login.Controller;
 
 import com.login.sso_login.constant.ResponseContants;
+import com.login.sso_login.model.User;
 import com.login.sso_login.service.UserService;
 import com.login.sso_login.utils.JackSonUtils;
 import com.login.sso_login.utils.SecretUtils;
@@ -34,21 +35,38 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/login")
-    public Object login(@RequestBody String user, HttpServletRequest request, HttpServletResponse response) {
+    public Object login(@RequestBody User user, HttpServletRequest request, HttpServletResponse response) {
         Map<String, String> result = new HashMap<>();
         try {
-            Map<String, String> userMap = (Map<String, String>) JackSonUtils.convertStringToObject(user, Map.class);
-            String userName = userMap.get("username");
-            String passWord = userMap.get("password");
+            String userName = user.getUserName();
+            String passWord = user.getPassWord();
+            passWord = SecretUtils.AesEncrypt(passWord);
             if (userService.getUser(userName, passWord) != null) {
                 String encryptUserName = SecretUtils.AesEncrypt(userName);
                 Cookie cookie = new Cookie(LONGIN_COOKIE_KEY, encryptUserName);
                 cookie.setPath("/");
                 response.addCookie(cookie);
                 result.put(ResponseContants.DATA, encryptUserName);
+                result.put(ResponseContants.STATUS, ResponseContants.SUCCESS);
+            }else{
+                result.put(ResponseContants.STATUS, ResponseContants.FAIL);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put(ResponseContants.STATUS, ResponseContants.FAIL);
+            result.put(ResponseContants.MESSAGE, e.getMessage());
+        }
+        return result;
+    }
+
+
+    @PostMapping("/registry")
+    public Object registry(@RequestBody User user, HttpServletRequest request, HttpServletResponse response) {
+        Map<String, String> result = new HashMap<>();
+        try {
+            userService.registry(user);
             result.put(ResponseContants.STATUS, ResponseContants.SUCCESS);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             result.put(ResponseContants.STATUS, ResponseContants.FAIL);
             result.put(ResponseContants.MESSAGE, e.getMessage());
