@@ -15,4 +15,8 @@ public interface UserService {
     List<User> getUserByName(String userName);
 
     void registry(User user) throws Exception;
+
+    String getLoginTokenByUser(User user) throws Exception;
+
+    void logout(User user) throws Exception;
 }

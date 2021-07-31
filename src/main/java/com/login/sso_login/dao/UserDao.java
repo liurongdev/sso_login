@@ -16,16 +16,22 @@ import java.util.List;
 public interface UserDao {
 
     @Select("<script>"
-            +"select id,name,password,create_date as createDate,update_date as updateDate "
+            +"select id,name as userName,password as passWord,create_date as createDate,update_date as updateDate"
             +" from user where name = #{userName} and password = #{passWord}"
             +"</script>")
     User getUser(@Param("userName") String userName,@Param("passWord") String passWord);
 
     @Select("<script>"
-            +"select id,name,password,create_date as createDate,update_date as updateDate "
+            +"select id,name as userName,password as passWord,create_date as createDate,update_date as updateDate "
             +" from user where name = #{userName}"
             +"</script>")
     List<User> getUserByName(@Param("userName") String userName);
+
+    @Select("<script>"
+            +"select id,name as userName,password as passWord,create_date as createDate,update_date as updateDate"
+            +" from user where id = #{id}"
+            +"</script>")
+    User getUserById(@Param("id") int userId);
 
     @Insert("<script>"
             +"insert into user(id,name,password,create_date,update_time,head_image_url)"

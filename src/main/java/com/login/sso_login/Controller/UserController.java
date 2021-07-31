@@ -31,26 +31,50 @@ public class UserController {
 
     private static final String LONGIN_COOKIE_KEY = "login_uid";
 
+    private static final String LONGIN_TOKEN_KEY = "Token";
+
     @Autowired
     private UserService userService;
 
     @PostMapping("/login")
     public Object login(@RequestBody User user, HttpServletRequest request, HttpServletResponse response) {
-        Map<String, String> result = new HashMap<>();
+        Map<String, Object> result = new HashMap<>();
         try {
             String userName = user.getUserName();
             String passWord = user.getPassWord();
             passWord = SecretUtils.AesEncrypt(passWord);
-            if (userService.getUser(userName, passWord) != null) {
+            user = userService.getUser(userName,passWord);
+            if (user != null) {
                 String encryptUserName = SecretUtils.AesEncrypt(userName);
+                String token = userService.getLoginTokenByUser(user);
+                Map<String, Object> map = new HashMap<>();
                 Cookie cookie = new Cookie(LONGIN_COOKIE_KEY, encryptUserName);
                 cookie.setPath("/");
                 response.addCookie(cookie);
-                result.put(ResponseContants.DATA, encryptUserName);
+                map.put(LONGIN_COOKIE_KEY, token);
+                map.put(LONGIN_TOKEN_KEY, token);
+                map.put("user",user);
+                result.put(ResponseContants.DATA, map);
                 result.put(ResponseContants.STATUS, ResponseContants.SUCCESS);
-            }else{
+                response.addHeader(LONGIN_TOKEN_KEY, token);
+            } else {
                 result.put(ResponseContants.STATUS, ResponseContants.FAIL);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put(ResponseContants.STATUS, ResponseContants.FAIL);
+            result.put(ResponseContants.MESSAGE, e.getMessage());
+        }
+        return result;
+    }
+
+
+    @PostMapping("/logout")
+    public Object logout(@RequestBody User user, HttpServletRequest request, HttpServletResponse response) {
+        Map<String, Object> result = new HashMap<>();
+        try {
+            userService.logout(user);
+            result.put(ResponseContants.STATUS, ResponseContants.SUCCESS);
         } catch (Exception e) {
             e.printStackTrace();
             result.put(ResponseContants.STATUS, ResponseContants.FAIL);

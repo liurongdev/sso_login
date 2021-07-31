@@ -1,5 +1,6 @@
 package com.login.sso_login.service.impl;
 
+import com.login.sso_login.component.RedisService;
 import com.login.sso_login.dao.UserDao;
 import com.login.sso_login.model.User;
 import com.login.sso_login.service.UserService;
@@ -22,6 +23,9 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+
+    @Autowired
+    private RedisService redisService;
 
     @Autowired
     private UserDao userDao;
@@ -62,5 +66,24 @@ public class UserServiceImpl implements UserService {
         user.setUpdateDate(now);
         user.setHeadImageUrl(null);
         userDao.insertByUser(user);
+    }
+
+    @Override
+    public String getLoginTokenByUser(User user) throws Exception {
+        long timeStamp=System.currentTimeMillis();
+        String data=String.format("%s_%s",user.getUserName(),timeStamp);
+        String token = SecretUtils.AesEncrypt(data);
+        redisService.set(user.getUserName(),token);
+        return token;
+    }
+
+    @Override
+    public void logout(User user) throws Exception {
+        if (userDao.getUserById(user.getId()) != null) {
+            user = userDao.getUserById(user.getId());
+        } else {
+            user = userDao.getUserByName(user.getUserName()).get(0);
+        }
+        redisService.delete(user.getUserName());
     }
 }

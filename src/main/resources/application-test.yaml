@@ -72,7 +72,26 @@ spring:
         enabled: true
         url-pattern: /*
         exclusions: "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*"
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    database: 0
+    jedis:
+      pool:
+        max-active: 8
+        max-wait: -1ms
+        min-idle: 0
+    lettuce:
+      pool:
+        max-active: 8
 
+#spring.redis.host=127.0.0.1
+#spring.redis.port=6379
+#spring.redis.database=0
+#spring.redis.jedis.pool.max-active=8
+#spring.redis.jedis.pool.min-idle=0
+#spring.redis.lettuce.pool.max-active=8
+#spring.redis.jedis.pool.max-wait=-1ms
 
 logging:
   config: classpath:log4j2.yaml
@@ -93,8 +112,8 @@ logging:
 #eureka.client.fetch-registry=true
 #eureka.client.serviceUrl.defaultZone=http://localhost:8090/eureka/
 
-#????redis
-#spring.redis.host=localhost
+#redis
+#spring.redis.host=127.0.0.1
 #spring.redis.port=6379
 #spring.redis.database=0
 #spring.redis.jedis.pool.max-active=8
